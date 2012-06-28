@@ -3,26 +3,26 @@
  * 
  * Please see distribution for license.
  */
-package com.opengamma.integration.copiernew.rawsheet;
+package com.opengamma.integration.copiernew.sheet;
 
 /**
- * Known rawsheet formats
+ * Known sheet formats
  */
 public enum SheetFormat {
 
-  /** CSV rawsheet */
+  /** CSV sheet */
   CSV, 
 
-  /** XLS rawsheet */
+  /** XLS sheet */
   XLS, 
 
-  /** XLSX rawsheet */
+  /** XLSX sheet */
   XLSX,
   
-  /** ZIP rawsheet */
+  /** ZIP sheet */
   ZIP,
 
-  /** Unknown rawsheet */
+  /** Unknown sheet */
   UNKNOWN;
  
   public static SheetFormat of(String filename) {

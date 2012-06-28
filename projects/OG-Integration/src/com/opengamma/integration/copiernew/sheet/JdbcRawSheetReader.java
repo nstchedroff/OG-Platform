@@ -4,7 +4,7 @@
  * Please see distribution for license.
  */
 
-package com.opengamma.integration.copiernew.rawsheet.reader;
+package com.opengamma.integration.copiernew.sheet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -1,7 +1,8 @@
-package com.opengamma.integration.copiernew;
+package com.opengamma.integration.copiernew.sheet;
 
-import com.opengamma.integration.copiernew.rawsheet.writer.RawSheetWriter;
-import com.opengamma.integration.copiernew.row.RowWriter;
+import com.opengamma.integration.copiernew.Writeable;
+import com.opengamma.integration.copiernew.sheet.RawSheetWriter;
+import com.opengamma.integration.copiernew.sheet.RowWriter;
 import com.opengamma.util.ArgumentChecker;
 
 /**

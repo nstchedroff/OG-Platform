@@ -5,7 +5,7 @@
  */
 package com.opengamma.integration.copiernew.security;
 
-import com.opengamma.integration.copiernew.row.RowWriter;
+import com.opengamma.integration.copiernew.sheet.RowWriter;
 import com.opengamma.master.security.ManageableSecurity;
 
 import java.util.Map;

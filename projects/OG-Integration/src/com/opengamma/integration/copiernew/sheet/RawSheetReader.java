@@ -4,7 +4,7 @@
  * Please see distribution for license.
  */
 
-package com.opengamma.integration.copiernew.rawsheet.reader;
+package com.opengamma.integration.copiernew.sheet;
 
 import java.io.Closeable;
 import java.io.FileInputStream;
@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.util.Map;
 
 import com.opengamma.OpenGammaRuntimeException;
-import com.opengamma.integration.copiernew.rawsheet.SheetFormat;
 import com.opengamma.util.ArgumentChecker;
 
 /**
@@ -34,7 +33,7 @@ public abstract class RawSheetReader implements Closeable, Iterable<Map<String, 
       case XLS:
         return new XlsRawSheetReader(inputStream, 0);
       default:
-        throw new OpenGammaRuntimeException("Could not create a reader for the rawsheet input format " + sheetFormat.toString());
+        throw new OpenGammaRuntimeException("Could not create a reader for the sheet input format " + sheetFormat.toString());
     }
   }
   

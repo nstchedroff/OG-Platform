@@ -4,7 +4,7 @@
  * Please see distribution for license.
  */
 
-package com.opengamma.integration.copiernew.rawsheet.writer;
+package com.opengamma.integration.copiernew.sheet;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,7 +20,7 @@ import com.opengamma.util.ArgumentChecker;
 import au.com.bytecode.opencsv.CSVWriter;
 
 /**
- * This class implements a rawsheet writer that facilitates writing rows to a csv file. The columns and their order are specified
+ * This class implements a sheet writer that facilitates writing rows to a csv file. The columns and their order are specified
  * in the constructor. Subsequently, rows to be written can be supplied as a map from column headings to the actual data. 
  */
 public class CsvRawSheetWriter extends RawSheetWriter {

@@ -3,7 +3,7 @@
  * 
  * Please see distribution for license.
  */
-package com.opengamma.integration.copiernew.row;
+package com.opengamma.integration.copiernew.sheet;
 
 import java.util.Map;
 

@@ -4,18 +4,17 @@
  * Please see distribution for license.
  */
 
-package com.opengamma.integration.copiernew.rawsheet.writer;
+package com.opengamma.integration.copiernew.sheet;
 
 import java.io.*;
 import java.util.Map;
 
 import com.opengamma.OpenGammaRuntimeException;
 import com.opengamma.integration.copiernew.Writeable;
-import com.opengamma.integration.copiernew.rawsheet.SheetFormat;
 import com.opengamma.util.ArgumentChecker;
 
 /**
- * This abstract class represents a rawsheet writer that, given a map from column names to data, writes out a row containing that
+ * This abstract class represents a sheet writer that, given a map from column names to data, writes out a row containing that
  * data under the matching columns.
  */
 public abstract class RawSheetWriter implements Writeable<Map<String, String>>, Closeable, Flushable {
@@ -38,7 +37,7 @@ public abstract class RawSheetWriter implements Writeable<Map<String, String>>, 
       case CSV:
         return new CsvRawSheetWriter(outputStream, columns);
       default:
-        throw new OpenGammaRuntimeException("Could not create a writer for the rawsheet output format " + sheetFormat.toString());
+        throw new OpenGammaRuntimeException("Could not create a writer for the sheet output format " + sheetFormat.toString());
     }
   }
 

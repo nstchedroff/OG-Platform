@@ -1,6 +1,6 @@
-package com.opengamma.integration.copiernew;
+package com.opengamma.integration.copiernew.sheet;
 
-import com.opengamma.integration.copiernew.row.RowReader;
+import com.opengamma.integration.copiernew.sheet.RowReader;
 import com.opengamma.util.ArgumentChecker;
 
 import java.util.Iterator;

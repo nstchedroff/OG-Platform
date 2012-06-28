@@ -3,22 +3,24 @@
  *
  * Please see distribution for license.
  */
-package com.opengamma.integration.copiernew.security;
+package com.opengamma.integration.copiernew.exchange;
 
 import com.opengamma.integration.copiernew.sheet.RowReader;
-import com.opengamma.master.security.ManageableSecurity;
+import com.opengamma.master.exchange.ManageableExchange;
 
 import java.util.Map;
 
-public class SecurityRowReader<E extends ManageableSecurity> implements RowReader<E> {
+public class ExchangeRowReader implements RowReader<ManageableExchange> {
 
   @Override
-  public E readRow(Map<String, String> row) {
+  public ManageableExchange readRow(Map<String, String> row) {
+    ManageableExchange exchange = new ManageableExchange();
+
     return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
   public String[] getColumns() {
-    return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 }
