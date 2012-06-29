@@ -37,8 +37,8 @@ public class SmileDeltaTermStructureDataBundle extends YieldCurveWithFXBundle {
    * @param smile The smile parameters.
    * @param currencyPair The currency pair for which the smile is valid.
    */
-  public SmileDeltaTermStructureDataBundle(final FXMatrix fxRates, final Map<String, Currency> curveCurrency, final YieldCurveBundle ycBundle, final SmileDeltaTermStructureParametersStrikeInterpolation smile,
-      Pair<Currency, Currency> currencyPair) {
+  public SmileDeltaTermStructureDataBundle(final FXMatrix fxRates, final Map<String, Currency> curveCurrency, final YieldCurveBundle ycBundle,
+      final SmileDeltaTermStructureParametersStrikeInterpolation smile, Pair<Currency, Currency> currencyPair) {
     super(fxRates, curveCurrency, ycBundle);
     Validate.notNull(smile, "Smile parameters");
     //TODO: check rate is available for currency pair.
