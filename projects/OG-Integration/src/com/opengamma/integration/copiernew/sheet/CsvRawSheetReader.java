@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2011 - present by OpenGamma Inc. and the OpenGamma group of companies
- * 
+ *
  * Please see distribution for license.
  */
 
@@ -27,7 +27,7 @@ public class CsvRawSheetReader extends RawSheetReader {
   private String[] _buffer;
 
   public CsvRawSheetReader(String filename) {
-    
+
     ArgumentChecker.notEmpty(filename, "filename");
 
     // Open file
@@ -47,14 +47,14 @@ public class CsvRawSheetReader extends RawSheetReader {
     }
 
   }
-   
+
   public CsvRawSheetReader(InputStream inputStream) {
-    
+
     ArgumentChecker.notNull(inputStream, "inputStream");
 
     // Set up CSV reader
     _csvReader = new CSVReader(new InputStreamReader(inputStream));
-    
+
     // Set columns
     setColumns(readHeaderRow());
 
@@ -68,7 +68,7 @@ public class CsvRawSheetReader extends RawSheetReader {
   }
 
   private Map<String, String> loadNextRow() {
-    
+
     // Read in next row
     String[] rawRow = _buffer;
     try {
@@ -81,7 +81,7 @@ public class CsvRawSheetReader extends RawSheetReader {
     if (rawRow == null) {
       return null;
     }
-    
+
     // Map read-in row onto expected columns
     Map<String, String> result = new HashMap<String, String>();
     for (int i = 0; i < getColumns().length; i++) {
@@ -104,13 +104,13 @@ public class CsvRawSheetReader extends RawSheetReader {
     } catch (IOException ex) {
       throw new OpenGammaRuntimeException("Error reading CSV file header row: " + ex.getMessage());
     }
-    
+
     // Normalise read-in headers (to lower case) and set as columns
     String[] columns = new String[rawRow.length];
     for (int i = 0; i < rawRow.length; i++) {
       columns[i] = rawRow[i].trim().toLowerCase();
     }
-    
+
     return columns;
   }
 
@@ -128,7 +128,7 @@ public class CsvRawSheetReader extends RawSheetReader {
     return new Iterator<Map<String, String>>() {
       @Override
       public boolean hasNext() {
-        return (_buffer == null);
+        return !(_buffer == null);
       }
 
       @Override

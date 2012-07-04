@@ -5,6 +5,8 @@ import com.opengamma.integration.copiernew.sheet.RawSheetWriter;
 import com.opengamma.integration.copiernew.sheet.RowWriter;
 import com.opengamma.util.ArgumentChecker;
 
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: kevin
@@ -26,7 +28,10 @@ public class SheetWriter<E> implements Writeable<E> {
 
   @Override
   public E addOrUpdate(E datum) {
-    _rawSheetWriter.addOrUpdate(_rowWriter.writeRow(datum));
+    Map<String, String> row = _rowWriter.writeRow(datum);
+    if (row != null) {
+      _rawSheetWriter.addOrUpdate(row);
+    }
     return datum;
   }
 

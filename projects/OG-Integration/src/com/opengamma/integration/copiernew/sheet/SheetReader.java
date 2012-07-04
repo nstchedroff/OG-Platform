@@ -19,9 +19,9 @@ public class SheetReader<E> implements Iterable<E> {
 
   private RowReader<E> _rowReader;
 
-  public SheetReader(Iterator<Map<String, String>> iterator, RowReader<E> rowReader) {
-    ArgumentChecker.notNull(iterator, "iterator");
-    _iterator = iterator;
+  public SheetReader(Iterable<Map<String, String>> iterable, RowReader<E> rowReader) {
+    ArgumentChecker.notNull(iterable, "iterator");
+    _iterator = iterable.iterator();
     _rowReader = rowReader;
   }
 
