@@ -7,15 +7,21 @@ package com.opengamma.integration.copiernew;
 
 import com.opengamma.component.tool.AbstractTool;
 import com.opengamma.financial.security.equity.EquitySecurity;
+import com.opengamma.financial.security.future.FutureSecurity;
+import com.opengamma.financial.security.option.SwaptionSecurity;
+import com.opengamma.financial.security.swap.SwapSecurity;
 import com.opengamma.integration.copiernew.exchange.ExchangeMasterReader;
+import com.opengamma.integration.copiernew.exchange.ExchangeMasterWriter;
+import com.opengamma.integration.copiernew.exchange.ExchangeRowReader;
 import com.opengamma.integration.copiernew.exchange.ExchangeRowWriter;
-import com.opengamma.integration.copiernew.sheet.CsvRawSheetWriter;
-import com.opengamma.integration.copiernew.sheet.RowWriter;
+import com.opengamma.integration.copiernew.security.SecurityMasterWriter;
+import com.opengamma.integration.copiernew.security.SecurityRowReader;
+import com.opengamma.integration.copiernew.sheet.*;
 import com.opengamma.integration.copiernew.security.SecurityMasterReader;
 import com.opengamma.integration.copiernew.security.SecurityRowWriter;
-import com.opengamma.integration.copiernew.sheet.SheetWriter;
 import com.opengamma.master.exchange.ExchangeSearchRequest;
 import com.opengamma.master.exchange.ManageableExchange;
+import com.opengamma.master.security.ManageableSecurity;
 import com.opengamma.master.security.SecuritySearchRequest;
 
 public class TestCopierTool extends AbstractTool {
@@ -32,31 +38,49 @@ public class TestCopierTool extends AbstractTool {
 
   @Override
   protected void doRun() throws Exception {
-/*
+
+
+    // Export securities
     SecuritySearchRequest searchRequest = new SecuritySearchRequest();
-    searchRequest.setSecurityType("EQUITY");
-
-    Iterable<EquitySecurity> securityMasterReader =
-        new SecurityMasterReader<EquitySecurity>(getToolContext().getSecurityMaster(), searchRequest);
-    RowWriter<EquitySecurity> securityRowWriter =
-        new SecurityRowWriter<EquitySecurity>("Equity");
-    Writeable<EquitySecurity> securitySheetWriter =
-        new SheetWriter<EquitySecurity>(new CsvRawSheetWriter("test.csv", securityRowWriter.getColumns()), securityRowWriter);
-
-    new Copier<EquitySecurity>().copy(securityMasterReader, securitySheetWriter);
-*/
-
-    ExchangeSearchRequest searchRequest = new ExchangeSearchRequest();
     //searchRequest.setSecurityType("EQUITY");
+    searchRequest.setExternalIdScheme("GLOBEOP_SECID");
+    Iterable<ManageableSecurity> securityMasterReader =
+        new SecurityMasterReader(getToolContext().getSecurityMaster(), searchRequest);
+    RowWriter<ManageableSecurity> securityRowWriter =
+        new SecurityRowWriter((Class<ManageableSecurity>[]) new Class<?>[]{ SwaptionSecurity.class, SwapSecurity.class });
+    Writeable<ManageableSecurity> securitySheetWriter =
+        new SheetWriter<ManageableSecurity>(new CsvRawSheetWriter("test-mixed.csv", securityRowWriter.getColumns()), securityRowWriter);
+    new Copier<ManageableSecurity>().copy(securityMasterReader, securitySheetWriter);
 
+/*
+    // Import securities
+    Iterable<ManageableSecurity> reader =
+        new SheetReader<ManageableSecurity>(new CsvRawSheetReader("test-equity.csv"), new SecurityRowReader(EquitySecurity.class));
+    Writeable<ManageableSecurity> writer =
+        new SecurityMasterWriter(getToolContext().getSecurityMaster());
+    new Copier<ManageableSecurity>().copy(reader, writer);
+*/
+/*
+    // Works fine but does not export details
+    ExchangeSearchRequest searchRequest = new ExchangeSearchRequest();
     Iterable<ManageableExchange> masterReader =
         new ExchangeMasterReader(getToolContext().getExchangeMaster(), searchRequest);
     RowWriter<ManageableExchange> rowWriter =
         new ExchangeRowWriter();
     Writeable<ManageableExchange> sheetWriter =
         new SheetWriter<ManageableExchange>(new CsvRawSheetWriter("test.csv", rowWriter.getColumns()), rowWriter);
-
     new Copier<ManageableExchange>().copy(masterReader, sheetWriter);
+*/
+
+
+/*
+    // Does not function correctly since details are omitted and beancompare detects details in existing exchanges
+    Iterable<ManageableExchange> reader =
+        new SheetReader<ManageableExchange>(new CsvRawSheetReader("test.csv"), new ExchangeRowReader());
+    Writeable<ManageableExchange> writer =
+        new ExchangeMasterWriter(getToolContext().getExchangeMaster());
+    new Copier<ManageableExchange>().copy(reader, writer);
+*/
 
   }
 
