@@ -5,22 +5,35 @@
  */
 package com.opengamma.integration.copiernew.exchange;
 
+import com.opengamma.integration.copiernew.sheet.JodaBeanRowUtils;
 import com.opengamma.integration.copiernew.sheet.RowReader;
 import com.opengamma.master.exchange.ManageableExchange;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ExchangeRowReader implements RowReader<ManageableExchange> {
 
+
+  private JodaBeanRowUtils _utils;
   @Override
   public ManageableExchange readRow(Map<String, String> row) {
-    ManageableExchange exchange = new ManageableExchange();
+    ManageableExchange.meta();
+    _utils = new JodaBeanRowUtils(
+      ManageableExchange.class,
+      new String[] {
+        "uniqueid",
+        "detail"
+      },
+      new String[] {},
+      new HashMap<Class<?>, Class<?>[]>()
+    );
 
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return (ManageableExchange) _utils.constructBean(row);
   }
 
   @Override
   public String[] getColumns() {
-    return null;
+    return _utils.getColumns();
   }
 }

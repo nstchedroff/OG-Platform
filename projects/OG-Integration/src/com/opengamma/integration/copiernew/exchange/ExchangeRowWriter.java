@@ -5,20 +5,24 @@
  */
 package com.opengamma.integration.copiernew.exchange;
 
-import com.opengamma.integration.copiernew.security.SecurityRowUtils;
+import com.opengamma.integration.copiernew.sheet.JodaBeanRowUtils;
 import com.opengamma.integration.copiernew.sheet.RowWriter;
 import com.opengamma.master.exchange.ManageableExchange;
-import com.opengamma.master.security.ManageableSecurity;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ExchangeRowWriter implements RowWriter<ManageableExchange> {
 
-  private ExchangeRowUtils _utils;
-
-  public ExchangeRowWriter() {
-    _utils = new ExchangeRowUtils();
-  }
+  private JodaBeanRowUtils _utils = new JodaBeanRowUtils(
+    ManageableExchange.class,
+    new String[] {
+      "uniqueid",
+      "detail"
+    },
+    new String[] {},
+    new HashMap<Class<?>, Class<?>[]>()
+  );
 
   @Override
   public Map<String, String> writeRow(ManageableExchange exchange) {
