@@ -9,18 +9,15 @@ import com.opengamma.master.security.*;
 import com.opengamma.util.ArgumentChecker;
 import com.opengamma.util.beancompare.BeanCompare;
 import com.opengamma.util.beancompare.BeanDifference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.time.calendar.ZonedDateTime;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kevin
- * Date: 6/25/12
- * Time: 2:32 PM
- * To change this template use File | Settings | File Templates.
- */
 public class SecurityMasterWriter implements Writeable<ManageableSecurity> {
+
+  private static final Logger s_logger = LoggerFactory.getLogger(Writeable.class);
 
   SecurityMaster _securityMaster;
   private BeanCompare _beanCompare;
@@ -50,10 +47,13 @@ public class SecurityMasterWriter implements Writeable<ManageableSecurity> {
       } catch (Exception e) {
         throw new OpenGammaRuntimeException("Error comparing securities with ID bundle " + security.getExternalIdBundle(), e);
       }
+      // Problem since details are not considered here
       if (differences.size() == 1 && differences.get(0).getProperty().propertyType() == UniqueId.class) {
         // It's already there, don't update or add it
+        s_logger.info("Not updating existing " + foundSecurity);
         return foundSecurity;
       } else {
+        s_logger.info("Updating " + foundSecurity + " to " + security);
         SecurityDocument updateDoc = new SecurityDocument(security);
         updateDoc.setUniqueId(foundSecurity.getUniqueId());
         SecurityDocument result = _securityMaster.update(updateDoc);
@@ -61,6 +61,7 @@ public class SecurityMasterWriter implements Writeable<ManageableSecurity> {
       }
     } else {
       // Not found, so add it
+      s_logger.info("Adding " + security);
       SecurityDocument addDoc = new SecurityDocument(security);
       SecurityDocument result = _securityMaster.add(addDoc);
       return result.getSecurity();

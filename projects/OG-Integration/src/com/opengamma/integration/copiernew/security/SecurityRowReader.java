@@ -5,20 +5,60 @@
  */
 package com.opengamma.integration.copiernew.security;
 
+import com.opengamma.integration.copiernew.sheet.JodaBeanRowUtils;
 import com.opengamma.integration.copiernew.sheet.RowReader;
 import com.opengamma.master.security.ManageableSecurity;
+import com.opengamma.util.ArgumentChecker;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-public class SecurityRowReader<E extends ManageableSecurity> implements RowReader<E> {
+public class SecurityRowReader implements RowReader<ManageableSecurity> {
+
+  private Map<Class<? extends ManageableSecurity>, SecurityRowUtils> _rowUtils;
+
+  public SecurityRowReader(Class<? extends ManageableSecurity> clazz) {
+    this(new Class[] { clazz });
+  }
+
+  public SecurityRowReader(Class<? extends ManageableSecurity>[] clazzes) {
+    ArgumentChecker.notEmpty(clazzes, "clazzes");
+    ArgumentChecker.noNulls(clazzes, "clazzes");
+    for (Class<? extends ManageableSecurity> clazz : clazzes) {
+      _rowUtils.put(clazz, new SecurityRowUtils(clazz));
+    }
+  }
 
   @Override
-  public E readRow(Map<String, String> row) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  public ManageableSecurity readRow(Map<String, String> row) {
+    if (_rowUtils.size() == 1) {
+      return (ManageableSecurity) _rowUtils.values().iterator().next().constructBean(row);
+    } else {
+      // get sec type of current row
+      Class<?> clazz;
+      try {
+        clazz = Class.forName(row.get(SecurityRowUtils.SECTYPE_COLUMN_NAME).trim().toLowerCase());
+      } catch (ClassNotFoundException e) {
+        return null;
+      }
+      return (ManageableSecurity) _rowUtils.get(clazz).constructBean(row);
+    }
   }
 
   @Override
   public String[] getColumns() {
-    return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
+    SortedSet<String> result = new TreeSet<String>();
+    if (_rowUtils.size() > 1) {
+      result.add(SecurityRowUtils.SECTYPE_COLUMN_NAME);
+    }
+    for (JodaBeanRowUtils rowUtils : _rowUtils.values()) {
+      result.addAll(Arrays.asList(rowUtils.getColumns()));
+    }
+    return result.toArray(new String[result.size()]);
   }
 }

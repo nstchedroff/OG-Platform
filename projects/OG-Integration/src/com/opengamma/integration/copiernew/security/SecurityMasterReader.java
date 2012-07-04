@@ -13,7 +13,7 @@ import com.opengamma.util.ArgumentChecker;
 
 import java.util.Iterator;
 
-public class SecurityMasterReader<E extends ManageableSecurity> implements Iterable<E> {
+public class SecurityMasterReader implements Iterable<ManageableSecurity> {
 
   private SecuritySearchResult _securitySearchResult;
 
@@ -30,7 +30,7 @@ public class SecurityMasterReader<E extends ManageableSecurity> implements Itera
   }
 
   @Override
-  public Iterator<E> iterator() {
-    return (Iterator<E>) _securitySearchResult.getSecurities().iterator();
+  public Iterator<ManageableSecurity> iterator() {
+    return _securitySearchResult.getSecurities().iterator();
   }
 }
