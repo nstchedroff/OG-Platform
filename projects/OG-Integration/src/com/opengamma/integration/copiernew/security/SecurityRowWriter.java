@@ -28,11 +28,7 @@ public class SecurityRowWriter implements RowWriter<ManageableSecurity> {
   private Map<Class<? extends ManageableSecurity>, SecurityRowUtils> _rowUtils =
       new HashMap<Class<? extends ManageableSecurity>, SecurityRowUtils>();
 
-  public SecurityRowWriter(Class<? extends ManageableSecurity> clazz) {
-    this(new Class[] { clazz });
-  }
-
-  public SecurityRowWriter(Class<? extends ManageableSecurity>[] clazzes) {
+  public SecurityRowWriter(Class<? extends ManageableSecurity> ... clazzes) {
     ArgumentChecker.notEmpty(clazzes, "clazzes");
     ArgumentChecker.noNulls(clazzes, "clazzes");
     for (Class<? extends ManageableSecurity> clazz : clazzes) {
