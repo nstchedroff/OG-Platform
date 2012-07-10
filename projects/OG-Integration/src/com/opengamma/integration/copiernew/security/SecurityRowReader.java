@@ -22,11 +22,7 @@ public class SecurityRowReader implements RowReader<ManageableSecurity> {
 
   private Map<Class<? extends ManageableSecurity>, SecurityRowUtils> _rowUtils;
 
-  public SecurityRowReader(Class<? extends ManageableSecurity> clazz) {
-    this(new Class[] { clazz });
-  }
-
-  public SecurityRowReader(Class<? extends ManageableSecurity>[] clazzes) {
+  public SecurityRowReader(Class<? extends ManageableSecurity> ... clazzes) {
     ArgumentChecker.notEmpty(clazzes, "clazzes");
     ArgumentChecker.noNulls(clazzes, "clazzes");
     for (Class<? extends ManageableSecurity> clazz : clazzes) {
