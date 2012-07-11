@@ -9,10 +9,13 @@ import com.opengamma.master.security.*;
 import com.opengamma.util.ArgumentChecker;
 import com.opengamma.util.beancompare.BeanCompare;
 import com.opengamma.util.beancompare.BeanDifference;
+import org.hsqldb.lib.ClosableByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.time.calendar.ZonedDateTime;
+import java.io.Flushable;
+import java.io.IOException;
 import java.util.List;
 
 public class SecurityMasterWriter implements Writeable<ManageableSecurity> {
@@ -66,5 +69,10 @@ public class SecurityMasterWriter implements Writeable<ManageableSecurity> {
       SecurityDocument result = _securityMaster.add(addDoc);
       return result.getSecurity();
     }
+  }
+
+  @Override
+  public void flush() throws IOException {
+    // No action
   }
 }

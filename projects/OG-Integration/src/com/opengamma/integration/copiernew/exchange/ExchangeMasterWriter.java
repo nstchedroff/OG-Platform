@@ -12,6 +12,7 @@ import com.opengamma.util.beancompare.BeanCompare;
 import com.opengamma.util.beancompare.BeanDifference;
 
 import javax.time.calendar.ZonedDateTime;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -65,5 +66,10 @@ public class ExchangeMasterWriter implements Writeable<ManageableExchange> {
       ExchangeDocument result = _exchangeMaster.add(addDoc);
       return result.getExchange();
     }
+  }
+
+  @Override
+  public void flush() throws IOException {
+    // No action
   }
 }

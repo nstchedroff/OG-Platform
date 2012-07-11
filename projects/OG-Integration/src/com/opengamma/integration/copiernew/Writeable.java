@@ -6,10 +6,13 @@
 
 package com.opengamma.integration.copiernew;
 
+import java.io.Closeable;
+import java.io.Flushable;
+
 /**
  * Interface for a writer
  */
-public interface Writeable<E> {
+public interface Writeable<E> extends Flushable {
 
   E addOrUpdate(E datum);
         

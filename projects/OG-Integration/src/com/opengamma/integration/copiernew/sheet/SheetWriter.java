@@ -5,16 +5,12 @@ import com.opengamma.integration.copiernew.sheet.RawSheetWriter;
 import com.opengamma.integration.copiernew.sheet.RowWriter;
 import com.opengamma.util.ArgumentChecker;
 
+import java.io.Closeable;
+import java.io.Flushable;
+import java.io.IOException;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kevin
- * Date: 6/25/12
- * Time: 5:24 PM
- * To change this template use File | Settings | File Templates.
- */
-public class SheetWriter<E> implements Writeable<E> {
+public class SheetWriter<E> implements Writeable<E>, Closeable {
 
   private RowWriter<E> _rowWriter;
   private RawSheetWriter _rawSheetWriter;
@@ -35,4 +31,13 @@ public class SheetWriter<E> implements Writeable<E> {
     return datum;
   }
 
+  @Override
+  public void close() throws IOException {
+    _rawSheetWriter.close();
+  }
+
+  @Override
+  public void flush() throws IOException {
+    _rawSheetWriter.flush();
+  }
 }
