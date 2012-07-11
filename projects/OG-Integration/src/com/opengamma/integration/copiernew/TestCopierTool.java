@@ -10,6 +10,7 @@ import com.opengamma.financial.security.equity.EquitySecurity;
 import com.opengamma.financial.security.future.FutureSecurity;
 import com.opengamma.financial.security.option.SwaptionSecurity;
 import com.opengamma.financial.security.swap.SwapSecurity;
+import com.opengamma.id.ObjectId;
 import com.opengamma.integration.copiernew.exchange.ExchangeMasterReader;
 import com.opengamma.integration.copiernew.exchange.ExchangeMasterWriter;
 import com.opengamma.integration.copiernew.exchange.ExchangeRowReader;
@@ -40,26 +41,32 @@ public class TestCopierTool extends AbstractTool {
   protected void doRun() throws Exception {
 
 
+/*
     // Export securities
     SecuritySearchRequest searchRequest = new SecuritySearchRequest();
     //searchRequest.setSecurityType("EQUITY");
-    searchRequest.setExternalIdScheme("GLOBEOP_SECID");
-    Iterable<ManageableSecurity> securityMasterReader =
+    //searchRequest.setExternalIdScheme("GLOBEOP_SECID");
+    searchRequest.addObjectId(ObjectId.parse("DbSec~23239"));
+    searchRequest.addObjectId(ObjectId.parse("DbSec~1406"));
+    Iterable<ManageableSecurity> reader =
         new SecurityMasterReader(getToolContext().getSecurityMaster(), searchRequest);
-    RowWriter<ManageableSecurity> securityRowWriter =
-        new SecurityRowWriter((Class<ManageableSecurity>[]) new Class<?>[]{ SwaptionSecurity.class, SwapSecurity.class });
-    Writeable<ManageableSecurity> securitySheetWriter =
-        new SheetWriter<ManageableSecurity>(new CsvRawSheetWriter("test-mixed.csv", securityRowWriter.getColumns()), securityRowWriter);
-    new Copier<ManageableSecurity>().copy(securityMasterReader, securitySheetWriter);
 
-/*
+    RowWriter<ManageableSecurity> securityRowWriter =
+        new SecurityRowWriter(EquitySecurity.class, SwapSecurity.class);
+    Writeable<ManageableSecurity> writer =
+        new SheetWriter<ManageableSecurity>(new CsvRawSheetWriter("test-mixed 3.csv", securityRowWriter.getColumns()),
+            securityRowWriter);
+*/
+
     // Import securities
     Iterable<ManageableSecurity> reader =
-        new SheetReader<ManageableSecurity>(new CsvRawSheetReader("test-equity.csv"), new SecurityRowReader(EquitySecurity.class));
+        new SheetReader<ManageableSecurity>(new CsvRawSheetReader("test-mixed 3.csv"),
+            new SecurityRowReader(EquitySecurity.class, SwapSecurity.class));
     Writeable<ManageableSecurity> writer =
         new SecurityMasterWriter(getToolContext().getSecurityMaster());
+
     new Copier<ManageableSecurity>().copy(reader, writer);
-*/
+
 /*
     // Works fine but does not export details
     ExchangeSearchRequest searchRequest = new ExchangeSearchRequest();
@@ -72,7 +79,6 @@ public class TestCopierTool extends AbstractTool {
     new Copier<ManageableExchange>().copy(masterReader, sheetWriter);
 */
 
-
 /*
     // Does not function correctly since details are omitted and beancompare detects details in existing exchanges
     Iterable<ManageableExchange> reader =
@@ -82,6 +88,7 @@ public class TestCopierTool extends AbstractTool {
     new Copier<ManageableExchange>().copy(reader, writer);
 */
 
+    writer.flush();
   }
 
 }
