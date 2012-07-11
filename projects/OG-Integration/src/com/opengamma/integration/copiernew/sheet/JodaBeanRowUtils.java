@@ -341,18 +341,4 @@ public class JodaBeanRowUtils {
     return false;
   }
 
-  /**
-   * Given a bean class, find its subclasses; this is current hard coded as Java can neither identify the
-   * classes within a package, nor identify a class's subclasses.
-   * @param beanClass
-   * @return
-   */
-/*
-  protected abstract Collection<Class<?>> getSubClasses(Class<?> beanClass);
-
-  protected abstract String[] getIgnoreMetaproperties();
-
-  protected abstract String[] getClassPackages();
-*/
-
 }
