@@ -41,7 +41,7 @@ public class SecurityRowWriter implements RowWriter<ManageableSecurity> {
     if (_rowUtils.containsKey(security.getClass())) {
       Map<String, String> result = _rowUtils.get(security.getClass()).constructRow(security);
       if (_rowUtils.size() > 1) {
-        result.put(SecurityRowUtils.SECTYPE_COLUMN_NAME, security.getClass().getSimpleName());
+        result.put(SecurityRowUtils.SECTYPE_COLUMN_NAME, security.getClass().getName());
       }
       return result;
     } else {

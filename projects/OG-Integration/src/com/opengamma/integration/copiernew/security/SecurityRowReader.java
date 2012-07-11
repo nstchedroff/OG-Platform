@@ -12,6 +12,7 @@ import com.opengamma.util.ArgumentChecker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +21,8 @@ import java.util.TreeSet;
 
 public class SecurityRowReader implements RowReader<ManageableSecurity> {
 
-  private Map<Class<? extends ManageableSecurity>, SecurityRowUtils> _rowUtils;
+  private Map<Class<? extends ManageableSecurity>, SecurityRowUtils> _rowUtils =
+      new HashMap<Class<? extends ManageableSecurity>, SecurityRowUtils>();
 
   public SecurityRowReader(Class<? extends ManageableSecurity> ... clazzes) {
     ArgumentChecker.notEmpty(clazzes, "clazzes");
@@ -36,13 +38,20 @@ public class SecurityRowReader implements RowReader<ManageableSecurity> {
       return (ManageableSecurity) _rowUtils.values().iterator().next().constructBean(row);
     } else {
       // get sec type of current row
-      Class<?> clazz;
-      try {
-        clazz = Class.forName(row.get(SecurityRowUtils.SECTYPE_COLUMN_NAME).trim().toLowerCase());
-      } catch (ClassNotFoundException e) {
+
+      String secType = row.get(SecurityRowUtils.SECTYPE_COLUMN_NAME);
+
+      if (secType != null) {
+        Class<?> clazz;
+        try {
+          clazz = Class.forName(secType.trim());
+        } catch (ClassNotFoundException e) {
+          return null;
+        }
+        return (ManageableSecurity) _rowUtils.get(clazz).constructBean(row);
+      } else {
         return null;
       }
-      return (ManageableSecurity) _rowUtils.get(clazz).constructBean(row);
     }
   }
 
