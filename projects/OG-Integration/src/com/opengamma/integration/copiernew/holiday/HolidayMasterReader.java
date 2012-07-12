@@ -5,32 +5,32 @@
  */
 package com.opengamma.integration.copiernew.holiday;
 
-import com.opengamma.master.exchange.ExchangeMaster;
-import com.opengamma.master.exchange.ExchangeSearchRequest;
-import com.opengamma.master.exchange.ExchangeSearchResult;
-import com.opengamma.master.exchange.ManageableExchange;
+import com.opengamma.master.holiday.HolidayMaster;
+import com.opengamma.master.holiday.HolidaySearchRequest;
+import com.opengamma.master.holiday.HolidaySearchResult;
+import com.opengamma.master.holiday.ManageableHoliday;
 import com.opengamma.util.ArgumentChecker;
 
 import java.util.Iterator;
 
-public class HolidayMasterReader implements Iterable<ManageableExchange> {
+public class HolidayMasterReader implements Iterable<ManageableHoliday> {
 
-  private ExchangeSearchResult _exchangeSearchResult;
+  private HolidaySearchResult _holidaySearchResult;
 
-  public HolidayMasterReader(ExchangeMaster exchangeMaster) {
-    this(exchangeMaster, null);
+  public HolidayMasterReader(HolidayMaster holidayMaster) {
+    this(holidayMaster, null);
   }
 
-  public HolidayMasterReader(ExchangeMaster exchangeMaster, ExchangeSearchRequest exchangeSearchRequest) {
-    ArgumentChecker.notNull(exchangeMaster, "exchangeMaster");
-    if (exchangeSearchRequest == null) {
-      exchangeSearchRequest = new ExchangeSearchRequest();
+  public HolidayMasterReader(HolidayMaster holidayMaster, HolidaySearchRequest holidaySearchRequest) {
+    ArgumentChecker.notNull(holidayMaster, "holidayMaster");
+    if (holidaySearchRequest == null) {
+      holidaySearchRequest = new HolidaySearchRequest();
     }
-    _exchangeSearchResult = exchangeMaster.search(exchangeSearchRequest);
+    _holidaySearchResult = holidayMaster.search(holidaySearchRequest);
   }
 
   @Override
-  public Iterator<ManageableExchange> iterator() {
-    return _exchangeSearchResult.getExchanges().iterator();
+  public Iterator<ManageableHoliday> iterator() {
+    return _holidaySearchResult.getHolidays().iterator();
   }
 }

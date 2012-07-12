@@ -5,8 +5,12 @@ import com.opengamma.id.ExternalIdSearch;
 import com.opengamma.id.UniqueId;
 import com.opengamma.id.VersionCorrection;
 import com.opengamma.integration.copiernew.Writeable;
-import com.opengamma.master.exchange.ExchangeMaster;
-import com.opengamma.master.exchange.*;
+import com.opengamma.master.holiday.HolidayDocument;
+import com.opengamma.master.holiday.HolidayMaster;
+import com.opengamma.master.holiday.HolidaySearchRequest;
+import com.opengamma.master.holiday.HolidaySearchResult;
+import com.opengamma.master.holiday.HolidaySearchSortOrder;
+import com.opengamma.master.holiday.ManageableHoliday;
 import com.opengamma.util.ArgumentChecker;
 import com.opengamma.util.beancompare.BeanCompare;
 import com.opengamma.util.beancompare.BeanDifference;
@@ -15,56 +19,52 @@ import javax.time.calendar.ZonedDateTime;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kevin
- * Date: 6/25/12
- * Time: 2:32 PM
- * To change this template use File | Settings | File Templates.
- */
-public class HolidayMasterWriter implements Writeable<ManageableExchange> {
+public class HolidayMasterWriter implements Writeable<ManageableHoliday> {
 
-  ExchangeMaster _exchangeMaster;
+  HolidayMaster _holidayMaster;
   private BeanCompare _beanCompare;
 
-  public HolidayMasterWriter(ExchangeMaster exchangeMaster) {
-    ArgumentChecker.notNull(exchangeMaster, "exchangeMaster");
-    _exchangeMaster = exchangeMaster;
+  public HolidayMasterWriter(HolidayMaster holidayMaster) {
+    ArgumentChecker.notNull(holidayMaster, "holidayMaster");
+    _holidayMaster = holidayMaster;
     _beanCompare = new BeanCompare();
   }
 
   @Override
-  public ManageableExchange addOrUpdate(ManageableExchange exchange) {
-    ArgumentChecker.notNull(exchange, "exchange");
+  public ManageableHoliday addOrUpdate(ManageableHoliday holiday) {
+    ArgumentChecker.notNull(holiday, "holiday");
 
-    ExchangeSearchRequest searchReq = new ExchangeSearchRequest();
-    ExternalIdSearch idSearch = new ExternalIdSearch(exchange.getExternalIdBundle());  // match any one of the IDs
+    HolidaySearchRequest searchReq = new HolidaySearchRequest();
+    ExternalIdSearch exchangeIdSearch = new ExternalIdSearch(holiday.getExchangeExternalId());  // match any one of the IDs
     searchReq.setVersionCorrection(VersionCorrection.ofVersionAsOf(ZonedDateTime.now())); // valid now
-    searchReq.setExternalIdSearch(idSearch);
-    searchReq.setSortOrder(ExchangeSearchSortOrder.VERSION_FROM_INSTANT_DESC);
-    ExchangeSearchResult searchResult = _exchangeMaster.search(searchReq);
-    ManageableExchange foundExchange = searchResult.getFirstExchange();
-    if (foundExchange != null) {
+    searchReq.setExchangeExternalIdSearch(exchangeIdSearch);
+    searchReq.setSortOrder(HolidaySearchSortOrder.VERSION_FROM_INSTANT_DESC);
+    searchReq.setCurrency(holiday.getCurrency());
+    ExternalIdSearch regionIdSearch = new ExternalIdSearch(holiday.getRegionExternalId());  // match any one of the IDs
+    searchReq.setRegionExternalIdSearch(regionIdSearch);
+    HolidaySearchResult searchResult = _holidayMaster.search(searchReq);
+    ManageableHoliday foundHoliday = searchResult.getFirstHoliday();
+    if (foundHoliday != null) {
       List<BeanDifference<?>> differences;
       try {
-        differences = _beanCompare.compare(foundExchange, exchange);
+        differences = _beanCompare.compare(foundHoliday, holiday);
       } catch (Exception e) {
-        throw new OpenGammaRuntimeException("Error comparing exchanges with ID bundle " + exchange.getExternalIdBundle(), e);
+        throw new OpenGammaRuntimeException("Error comparing holidays " + holiday, e);
       }
       if (differences.size() == 1 && differences.get(0).getProperty().propertyType() == UniqueId.class) {
         // It's already there, don't update or add it
-        return foundExchange;
+        return foundHoliday;
       } else {
-        ExchangeDocument updateDoc = new ExchangeDocument(exchange);
-        updateDoc.setUniqueId(foundExchange.getUniqueId());
-        ExchangeDocument result = _exchangeMaster.update(updateDoc);
-        return result.getExchange();
+        HolidayDocument updateDoc = new HolidayDocument(holiday);
+        updateDoc.setUniqueId(foundHoliday.getUniqueId());
+        HolidayDocument result = _holidayMaster.update(updateDoc);
+        return result.getHoliday();
       }
     } else {
       // Not found, so add it
-      ExchangeDocument addDoc = new ExchangeDocument(exchange);
-      ExchangeDocument result = _exchangeMaster.add(addDoc);
-      return result.getExchange();
+      HolidayDocument addDoc = new HolidayDocument(holiday);
+      HolidayDocument result = _holidayMaster.add(addDoc);
+      return result.getHoliday();
     }
   }
 

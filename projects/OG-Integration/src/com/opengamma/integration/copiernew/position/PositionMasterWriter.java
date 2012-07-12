@@ -5,8 +5,11 @@ import com.opengamma.id.ExternalIdSearch;
 import com.opengamma.id.UniqueId;
 import com.opengamma.id.VersionCorrection;
 import com.opengamma.integration.copiernew.Writeable;
-import com.opengamma.master.exchange.ExchangeMaster;
-import com.opengamma.master.exchange.*;
+import com.opengamma.master.position.PositionDocument;
+import com.opengamma.master.position.PositionMaster;
+import com.opengamma.master.position.PositionSearchRequest;
+import com.opengamma.master.position.PositionSearchResult;
+import com.opengamma.master.position.ManageablePosition;
 import com.opengamma.util.ArgumentChecker;
 import com.opengamma.util.beancompare.BeanCompare;
 import com.opengamma.util.beancompare.BeanDifference;
@@ -15,56 +18,57 @@ import javax.time.calendar.ZonedDateTime;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kevin
- * Date: 6/25/12
- * Time: 2:32 PM
- * To change this template use File | Settings | File Templates.
- */
-public class PositionMasterWriter implements Writeable<ManageableExchange> {
+public class PositionMasterWriter implements Writeable<ManageablePosition> {
 
-  ExchangeMaster _exchangeMaster;
+  PositionMaster _positionMaster;
   private BeanCompare _beanCompare;
 
-  public PositionMasterWriter(ExchangeMaster exchangeMaster) {
-    ArgumentChecker.notNull(exchangeMaster, "exchangeMaster");
-    _exchangeMaster = exchangeMaster;
+  public PositionMasterWriter(PositionMaster positionMaster) {
+    ArgumentChecker.notNull(positionMaster, "positionMaster");
+    _positionMaster = positionMaster;
     _beanCompare = new BeanCompare();
   }
 
   @Override
-  public ManageableExchange addOrUpdate(ManageableExchange exchange) {
-    ArgumentChecker.notNull(exchange, "exchange");
+  public ManageablePosition addOrUpdate(ManageablePosition position) {
+    ArgumentChecker.notNull(position, "position");
 
-    ExchangeSearchRequest searchReq = new ExchangeSearchRequest();
-    ExternalIdSearch idSearch = new ExternalIdSearch(exchange.getExternalIdBundle());  // match any one of the IDs
+    PositionSearchRequest searchReq = new PositionSearchRequest();
+    ExternalIdSearch idSearch = new ExternalIdSearch(position.getSecurity().getExternalIdBundle());  // match any one of the IDs
     searchReq.setVersionCorrection(VersionCorrection.ofVersionAsOf(ZonedDateTime.now())); // valid now
-    searchReq.setExternalIdSearch(idSearch);
-    searchReq.setSortOrder(ExchangeSearchSortOrder.VERSION_FROM_INSTANT_DESC);
-    ExchangeSearchResult searchResult = _exchangeMaster.search(searchReq);
-    ManageableExchange foundExchange = searchResult.getFirstExchange();
-    if (foundExchange != null) {
+    searchReq.setSecurityIdSearch(idSearch);
+
+    // Try to match by provider id, otherwise look for positions w/ same quantity (not necessarily good)
+    if (position.getProviderId() != null) {
+      searchReq.setPositionProviderId(position.getProviderId());
+    } else {
+      searchReq.setMaxQuantity(position.getQuantity());
+      searchReq.setMinQuantity(position.getQuantity());
+    }
+
+    PositionSearchResult searchResult = _positionMaster.search(searchReq);
+    ManageablePosition foundPosition = searchResult.getFirstPosition();
+    if (foundPosition != null) {
       List<BeanDifference<?>> differences;
       try {
-        differences = _beanCompare.compare(foundExchange, exchange);
+        differences = _beanCompare.compare(foundPosition, position);
       } catch (Exception e) {
-        throw new OpenGammaRuntimeException("Error comparing exchanges with ID bundle " + exchange.getExternalIdBundle(), e);
+        throw new OpenGammaRuntimeException("Error comparing positions (" + position.getName() + ")", e);
       }
       if (differences.size() == 1 && differences.get(0).getProperty().propertyType() == UniqueId.class) {
         // It's already there, don't update or add it
-        return foundExchange;
+        return foundPosition;
       } else {
-        ExchangeDocument updateDoc = new ExchangeDocument(exchange);
-        updateDoc.setUniqueId(foundExchange.getUniqueId());
-        ExchangeDocument result = _exchangeMaster.update(updateDoc);
-        return result.getExchange();
+        PositionDocument updateDoc = new PositionDocument(position);
+        updateDoc.setUniqueId(foundPosition.getUniqueId());
+        PositionDocument result = _positionMaster.update(updateDoc);
+        return result.getPosition();
       }
     } else {
       // Not found, so add it
-      ExchangeDocument addDoc = new ExchangeDocument(exchange);
-      ExchangeDocument result = _exchangeMaster.add(addDoc);
-      return result.getExchange();
+      PositionDocument addDoc = new PositionDocument(position);
+      PositionDocument result = _positionMaster.add(addDoc);
+      return result.getPosition();
     }
   }
 

@@ -27,6 +27,8 @@ public class ExchangeRowWriter implements RowWriter<ManageableExchange> {
   @Override
   public Map<String, String> writeRow(ManageableExchange exchange) {
     return _utils.constructRow(exchange);
+
+    // TODO: Iterate through details, writing a 'partial' row for each
   }
 
   @Override
