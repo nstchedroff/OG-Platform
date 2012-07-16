@@ -3,7 +3,7 @@
  *
  * Please see distribution for license.
  */
-package com.opengamma.integration.copiernew.timeseries;
+package com.opengamma.integration.copiernew.historicaltimeseries;
 
 import com.opengamma.OpenGammaRuntimeException;
 import com.opengamma.master.historicaltimeseries.HistoricalTimeSeriesGetFilter;
